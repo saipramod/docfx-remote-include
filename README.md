@@ -43,17 +43,30 @@ Without a hint, the snippet is inlined verbatim.
 
 ## Install
 
-Two packages on nuget.org:
+Two packages on [GitHub Packages](https://github.com/saipramod?tab=packages&repo_name=docfx-remote-include):
 
 | Package                          | Purpose                                                  |
 | -------------------------------- | -------------------------------------------------------- |
 | `Docfx.RemoteInclude`            | Library — for hosts that call `Docset.Build(...)`.        |
 | `Docfx.RemoteInclude.Cli`        | `dotnet tool` — drop-in wrapper around `docfx build`.     |
 
+### Setup the NuGet source
+
+Add the GitHub Packages feed (one-time):
+
+```powershell
+dotnet nuget add source "https://nuget.pkg.github.com/saipramod/index.json" \
+  --name "saipramod" \
+  --username YOUR_GITHUB_USERNAME \
+  --password YOUR_GITHUB_PAT
+```
+
+> The PAT needs the `read:packages` scope. If the repo is public, no PAT is required.
+
 ### As a CLI
 
 ```powershell
-dotnet tool install -g Docfx.RemoteInclude.Cli
+dotnet tool install -g Docfx.RemoteInclude.Cli --source "saipramod"
 ```
 
 Configure via `remoteinclude.json` next to `docfx.json`:
