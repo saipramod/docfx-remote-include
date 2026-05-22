@@ -8,6 +8,7 @@
     <RootNamespace>Docfx.RemoteInclude.Cli</RootNamespace>
     <AssemblyName>docfx-ri</AssemblyName>
     <IsPackable>true</IsPackable>
+    <NoWarn>$(NoWarn);NU5111</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
