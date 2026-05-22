@@ -1,0 +1,12 @@
+- name: Home
+  href: index.md
+- name: Guide
+  items:
+    - name: Getting started
+      href: guide/getting-started.md
+    - name: Authentication
+      href: guide/authentication.md
+- name: Reference
+  items:
+    - name: Status board
+      href: reference/status.md

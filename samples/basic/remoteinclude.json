@@ -1,0 +1,5 @@
+{
+  "baseUrl": "https://raw.githubusercontent.com/",
+  "allowMissing": true,
+  "auth": { "mode": "none" }
+}

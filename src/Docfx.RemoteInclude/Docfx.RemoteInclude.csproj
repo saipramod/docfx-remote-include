@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Docfx.RemoteInclude</PackageId>
+    <RootNamespace>Docfx.RemoteInclude</RootNamespace>
+    <AssemblyName>Docfx.RemoteInclude</AssemblyName>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Docfx.RemoteInclude.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Markdig" />
+  </ItemGroup>
+
+</Project>

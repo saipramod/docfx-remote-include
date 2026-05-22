@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>docfx-ri</ToolCommandName>
+    <PackageId>Docfx.RemoteInclude.Cli</PackageId>
+    <RootNamespace>Docfx.RemoteInclude.Cli</RootNamespace>
+    <AssemblyName>docfx-ri</AssemblyName>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="docfx.app" />
+    <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="Azure.AI.OpenAI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Docfx.RemoteInclude\Docfx.RemoteInclude.csproj" />
+  </ItemGroup>
+
+</Project>

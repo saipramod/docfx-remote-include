@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Docfx.RemoteInclude/Docfx.RemoteInclude.csproj" />
+    <Project Path="src/Docfx.RemoteInclude.Cli/Docfx.RemoteInclude.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Docfx.RemoteInclude.Tests/Docfx.RemoteInclude.Tests.csproj" />
+  </Folder>
+</Solution>

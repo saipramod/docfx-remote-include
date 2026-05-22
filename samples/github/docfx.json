@@ -1,0 +1,18 @@
+{
+  "metadata": [],
+  "build": {
+    "content": [
+      {
+        "files": [ "**/*.{md,yml}" ],
+        "exclude": [ "_site/**", "obj/**", "bin/**" ]
+      }
+    ],
+    "output": "_site",
+    "template": [ "default", "modern" ],
+    "globalMetadata": {
+      "_appTitle": "Remote Include — GitHub Sample",
+      "_appName": "GitHub Remote Include",
+      "_enableSearch": true
+    }
+  }
+}

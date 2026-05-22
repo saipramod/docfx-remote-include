@@ -1,0 +1,11 @@
+bin/
+obj/
+_site/
+*.user
+.vs/
+.idea/
+.vscode/
+*.nupkg
+TestResults/
+artifacts/
+samples/engms/
