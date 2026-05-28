@@ -43,30 +43,20 @@ Without a hint, the snippet is inlined verbatim.
 
 ## Install
 
-Two packages on [GitHub Packages](https://github.com/saipramod?tab=packages&repo_name=docfx-remote-include):
+Two packages on [NuGet](https://www.nuget.org/packages/Documentation.DocfxRemoteInclude):
 
-| Package                          | Purpose                                                  |
-| -------------------------------- | -------------------------------------------------------- |
-| `Docfx.RemoteInclude`            | Library — for hosts that call `Docset.Build(...)`.        |
-| `Docfx.RemoteInclude.Cli`        | `dotnet tool` — drop-in wrapper around `docfx build`.     |
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Documentation.DocfxRemoteInclude?label=Library%20downloads)](https://www.nuget.org/packages/Documentation.DocfxRemoteInclude)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Documentation.DocfxRemoteInclude.Cli?label=CLI%20downloads)](https://www.nuget.org/packages/Documentation.DocfxRemoteInclude.Cli)
 
-### Setup the NuGet source
-
-Add the GitHub Packages feed (one-time):
-
-```powershell
-dotnet nuget add source "https://nuget.pkg.github.com/saipramod/index.json" \
-  --name "saipramod" \
-  --username YOUR_GITHUB_USERNAME \
-  --password YOUR_GITHUB_PAT
-```
-
-> The PAT needs the `read:packages` scope. If the repo is public, no PAT is required.
+| Package                                  | Purpose                                                  |
+| ---------------------------------------- | -------------------------------------------------------- |
+| `Documentation.DocfxRemoteInclude`       | Library — for hosts that call `Docset.Build(...)`.        |
+| `Documentation.DocfxRemoteInclude.Cli`   | `dotnet tool` — drop-in wrapper around `docfx build`.     |
 
 ### As a CLI
 
 ```powershell
-dotnet tool install -g Docfx.RemoteInclude.Cli --source "saipramod"
+dotnet tool install -g Documentation.DocfxRemoteInclude.Cli
 ```
 
 Configure via `remoteinclude.json` next to `docfx.json`:
@@ -116,6 +106,10 @@ By default, the directive source (e.g. `snippets/intro.md`) is appended as a rel
 The `{source}` token is replaced with the URL-encoded source value from the directive.
 
 ### As a library
+
+```powershell
+dotnet add package Documentation.DocfxRemoteInclude
+```
 
 ```csharp
 using Docfx;
