@@ -4,11 +4,11 @@
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>docfx-ri</ToolCommandName>
-    <PackageId>Docfx.RemoteInclude.Cli</PackageId>
+    <PackageId>Documentation.DocfxRemoteInclude.Cli</PackageId>
     <RootNamespace>Docfx.RemoteInclude.Cli</RootNamespace>
     <AssemblyName>docfx-ri</AssemblyName>
     <IsPackable>true</IsPackable>
-    <NoWarn>$(NoWarn);NU5111</NoWarn>
+    <NoWarn>$(NoWarn);NU5111;NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

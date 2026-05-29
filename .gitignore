@@ -9,3 +9,5 @@ _site/
 TestResults/
 artifacts/
 samples/engms/
+
+nuget.secret

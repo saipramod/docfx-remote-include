@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>Docfx.RemoteInclude</PackageId>
+    <PackageId>Documentation.DocfxRemoteInclude</PackageId>
     <RootNamespace>Docfx.RemoteInclude</RootNamespace>
     <AssemblyName>Docfx.RemoteInclude</AssemblyName>
     <IsPackable>true</IsPackable>
