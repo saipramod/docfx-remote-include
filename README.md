@@ -165,7 +165,7 @@ deterministic rules. The library itself has no Azure dependency.
 
 ## Status
 
-Stable. `1.0.0` — the public API is considered stable; breaking changes will follow
+Stable. `2.0.0` — the public API is considered stable; breaking changes will follow
 semantic versioning. Issues and PRs welcome.
 
 ## License
