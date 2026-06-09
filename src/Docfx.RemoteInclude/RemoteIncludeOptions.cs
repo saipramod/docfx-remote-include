@@ -28,6 +28,13 @@ public sealed class RemoteIncludeOptions
     public IRewriteService? RewriteService { get; init; }
 
     /// <summary>
+    /// Optional page transform service. When set, the fully-assembled page is sent through
+    /// this service after all remote includes are resolved. The service owns transformation
+    /// rules; pages pass metadata hints via frontmatter.
+    /// </summary>
+    public IPageTransformService? PageTransformService { get; init; }
+
+    /// <summary>
     /// How much of the host page to send as context for rewrites. Default <see cref="ContextStrategy.Section"/>.
     /// </summary>
     public ContextStrategy ContextStrategy { get; init; } = ContextStrategy.Section;

@@ -155,7 +155,8 @@ LLM — the library itself has no Azure dependency.
 
 ## Status
 
-Alpha. Public API may change before 1.0. Issues and PRs welcome.
+Stable. `1.0.0` — the public API is considered stable; breaking changes will follow
+semantic versioning. Issues and PRs welcome.
 
 ## License
 

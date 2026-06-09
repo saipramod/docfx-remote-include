@@ -9,5 +9,7 @@ _site/
 TestResults/
 artifacts/
 samples/engms/
+samples/bcdr/
+eb1/
 
 nuget.secret

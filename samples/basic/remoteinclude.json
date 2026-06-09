@@ -1,5 +1,9 @@
 {
-  "baseUrl": "https://raw.githubusercontent.com/",
-  "allowMissing": true,
-  "auth": { "mode": "none" }
+  "baseUrl": "http://localhost:5000/content/",
+  "allowMissing": false,
+  "auth": { "mode": "none" },
+  "transform": {
+    "endpoint": "http://localhost:5000/transform",
+    "auth": { "mode": "none" }
+  }
 }

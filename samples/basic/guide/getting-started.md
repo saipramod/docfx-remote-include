@@ -1,23 +1,27 @@
-# Getting started
+# Getting Started
 
-Welcome! This page mixes local prose with a remote snippet that lives in a
-public repository. Edit the snippet there and the next build of this site picks
-it up — no changes needed in this repository.
+Welcome! This page pulls shared content from the knowledge-service so it stays
+in sync across all documentation sites.
 
-## DocFX README
+## Prerequisites
 
-The README below is fetched from the `dotnet/docfx` GitHub repository and
-rendered as a block:
+The following prerequisites are served from the knowledge-service and shared
+across all guides:
 
-[!remoteinclude[DocFX README](dotnet/docfx/main/README.md)]
+[!remoteinclude[Prerequisites](snippets/prerequisites.md)]
+
+## Installation
+
+[!remoteinclude[Installation](snippets/install.md)]
 
 ## What just happened?
 
-At build time the extension issued
-`GET {baseUrl}/dotnet/docfx/main/README.md`, parsed the response as markdown,
-and inlined it above this paragraph. If the source had returned a 404, one of
-two things happens:
+At build time the extension issued `GET http://localhost:5000/content/snippets/prerequisites.md`
+and `GET http://localhost:5000/content/snippets/install.md`, parsed the responses
+as markdown, and inlined them above. This means:
 
-- With `allowMissing: false` the build fails loudly — desired in CI.
-- With `allowMissing: true` (this sample) the directive renders as a small
-  error box so the rest of the page still builds.
+- The knowledge-service is the single source of truth for these snippets
+- When prerequisites change, every site that includes them picks up the
+  update on next build — no copy-paste, no drift
+- The same service that provides content also transforms the final page
+  for consistent tone

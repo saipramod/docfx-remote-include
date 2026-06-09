@@ -46,6 +46,10 @@ public sealed class RemoteIncludeExtension : IMarkdownExtension
         {
             html.ObjectRenderers.Add(new HtmlRemoteIncludeInlineRenderer(_client, pipeline, _options));
         }
+        if (_options.PageTransformService is not null && !html.ObjectRenderers.Contains<PageRewriteDocumentRenderer>())
+        {
+            html.ObjectRenderers.Add(new PageRewriteDocumentRenderer(_options.PageTransformService, _options));
+        }
     }
 }
 

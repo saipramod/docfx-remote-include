@@ -54,6 +54,11 @@ public static class RemoteIncludeConfigLoader
                 ContextStrategy = config.Ai.ContextStrategy,
                 Auth = ResolveAuth(config.Ai.Auth),
             },
+            Transform = config.Transform is null ? null : new TransformSettings
+            {
+                Endpoint = config.Transform.Endpoint,
+                Auth = ResolveAuth(config.Transform.Auth),
+            },
         };
     }
 

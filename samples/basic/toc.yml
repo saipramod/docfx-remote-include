@@ -4,8 +4,12 @@
   items:
     - name: Getting started
       href: guide/getting-started.md
-    - name: Authentication
-      href: guide/authentication.md
+    - name: Architecture
+      href: guide/architecture.md
+    - name: Operations
+      href: guide/operations.md
+    - name: Onboarding
+      href: guide/onboarding.md
 - name: Reference
   items:
     - name: Status board

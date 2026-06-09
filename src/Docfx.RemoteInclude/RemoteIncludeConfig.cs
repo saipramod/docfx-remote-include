@@ -66,6 +66,18 @@ public sealed class AiSettings
 }
 
 /// <summary>
+/// Configuration for the page transform service.
+/// </summary>
+public sealed class TransformSettings
+{
+    /// <summary>The endpoint URL of the transform service (e.g. "https://localhost:8080/transform").</summary>
+    public string? Endpoint { get; init; }
+
+    /// <summary>Authentication settings for the transform service.</summary>
+    public AuthSettings? Auth { get; init; }
+}
+
+/// <summary>
 /// Root model for <c>remoteinclude.json</c>. All fields are optional; absent values fall back
 /// to CLI flags, environment variables, then built-in defaults.
 /// </summary>
@@ -75,6 +87,7 @@ public sealed class RemoteIncludeConfig
     public bool? AllowMissing { get; init; }
     public AuthSettings? Auth { get; init; }
     public AiSettings? Ai { get; init; }
+    public TransformSettings? Transform { get; init; }
 
     /// <summary>
     /// URL template that controls how the directive's <c>source</c> value is mapped to an
