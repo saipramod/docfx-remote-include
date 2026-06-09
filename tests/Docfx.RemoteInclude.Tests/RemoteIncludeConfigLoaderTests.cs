@@ -14,10 +14,8 @@ public class RemoteIncludeConfigLoaderTests
               "allowMissing": true,
               "urlTemplate": "api/content?path={source}",
               "auth": { "mode": "jwt", "value": "literal-token", "scope": "api://my-app/.default" },
-              "ai": {
-                "endpoint": "https://aoai.example.com/",
-                "deployment": "gpt-4o-mini",
-                "contextStrategy": "page",
+              "transform": {
+                "endpoint": "https://transform.example.com/transform",
                 "auth": { "mode": "managedIdentity", "value": "client-id-guid" }
               }
             }
@@ -35,11 +33,9 @@ public class RemoteIncludeConfigLoaderTests
             Assert.Equal(AuthMode.Jwt, cfg.Auth!.Mode);
             Assert.Equal("literal-token", cfg.Auth.Value);
             Assert.Equal("api://my-app/.default", cfg.Auth.Scope);
-            Assert.Equal("https://aoai.example.com/", cfg.Ai!.Endpoint);
-            Assert.Equal("gpt-4o-mini", cfg.Ai.Deployment);
-            Assert.Equal(ContextStrategy.Page, cfg.Ai.ContextStrategy);
-            Assert.Equal(AuthMode.ManagedIdentity, cfg.Ai.Auth!.Mode);
-            Assert.Equal("client-id-guid", cfg.Ai.Auth.Value);
+            Assert.Equal("https://transform.example.com/transform", cfg.Transform!.Endpoint);
+            Assert.Equal(AuthMode.ManagedIdentity, cfg.Transform.Auth!.Mode);
+            Assert.Equal("client-id-guid", cfg.Transform.Auth.Value);
         }
         finally { File.Delete(path); }
     }

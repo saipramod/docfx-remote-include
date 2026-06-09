@@ -57,22 +57,6 @@ public sealed class HtmlRemoteIncludeInlineRenderer : HtmlObjectRenderer<RemoteI
             return;
         }
 
-        if (!string.IsNullOrWhiteSpace(inline.RewriteHint) && _options.RewriteService is { } rewriter)
-        {
-            try
-            {
-                var context = SectionContext.Extract(inline, _options.ContextStrategy);
-                content = rewriter.RewriteAsync(
-                    new RewriteRequest(content, inline.RewriteHint, context, inline.Source))
-                    .GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-                HandleError(renderer, inline, $"Rewrite failed for '{inline.Source}': {ex.Message}");
-                return;
-            }
-        }
-
         stack.Push(inline.Source);
         try
         {

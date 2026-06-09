@@ -11,7 +11,6 @@ public sealed class RemoteIncludeInline : Inline
 {
     public string Source { get; init; } = string.Empty;
     public string Title { get; init; } = string.Empty;
-    public string RewriteHint { get; init; } = string.Empty;
 
     /// <summary>Block that owns this inline. Set at parse time so renderers can find surrounding context.</summary>
     public LeafBlock? OwningBlock { get; init; }

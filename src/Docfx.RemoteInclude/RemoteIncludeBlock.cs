@@ -15,9 +15,6 @@ public sealed class RemoteIncludeBlock : LeafBlock
     /// <summary>Verbatim <c>source</c> attribute as authored.</summary>
     public string Source { get; init; } = string.Empty;
 
-    /// <summary>Optional <c>rewrite="..."</c> hint passed to <see cref="IRewriteService"/>. Empty = no rewrite.</summary>
-    public string RewriteHint { get; init; } = string.Empty;
-
     /// <summary>Additional key/value attributes from the directive (reserved for future use).</summary>
     public IReadOnlyDictionary<string, string>? Attributes { get; init; }
 }

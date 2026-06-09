@@ -4,7 +4,7 @@ using Markdig.Renderers;
 namespace Docfx.RemoteInclude;
 
 /// <summary>
-/// Markdig extension that recognizes <c>[!remoteinclude[title](source "hint")]</c> directives
+/// Markdig extension that recognizes <c>[!remoteinclude[title](source)]</c> directives
 /// (block and inline) and inlines markdown fetched from an <see cref="IRemoteContentClient"/>.
 /// </summary>
 public sealed class RemoteIncludeExtension : IMarkdownExtension

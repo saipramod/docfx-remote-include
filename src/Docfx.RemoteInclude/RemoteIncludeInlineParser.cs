@@ -16,7 +16,7 @@ public sealed class RemoteIncludeInlineParser : InlineParser
 
     public override bool Match(InlineProcessor processor, ref StringSlice slice)
     {
-        if (!RemoteIncludeDirective.TryParseBracket(slice.Text, slice.Start, slice.End, out var consumedEnd, out var source, out var title, out var hint))
+        if (!RemoteIncludeDirective.TryParseBracket(slice.Text, slice.Start, slice.End, out var consumedEnd, out var source, out var title))
         {
             return false;
         }
@@ -27,7 +27,6 @@ public sealed class RemoteIncludeInlineParser : InlineParser
         {
             Source = source,
             Title = title,
-            RewriteHint = hint,
             OwningBlock = processor.Block,
         };
         return true;

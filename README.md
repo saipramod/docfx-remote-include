@@ -30,16 +30,27 @@ handling are all supported. The directive has two shapes that share the same syn
 - **Inline** — the directive appears mid-paragraph. The fetched markdown must reduce
   to a single paragraph; only its inline content is spliced in (no `<p>` wrapper).
 
-### Optional AI rewrite
+### Optional page transform
 
-Add a quoted hint after the source to ask an `IRewriteService` (e.g. Azure OpenAI in
-the CLI) to rewrite the fetched snippet to match the surrounding page voice:
+After all remote includes are resolved and a page is fully assembled, the build can
+send the page to a **page transform service** for centralized governance — tone
+harmonization, structure enforcement, or quality checks. The service owns the rules;
+pages only declare intent via YAML frontmatter:
 
-```markdown
-[!remoteinclude[Install](snippets/install.md "match this page's tone and tense")]
+```yaml
+---
+transform:
+  audience: engineer
+  intent: onboarding
+  overrides:
+    prerequisites: "target macOS users"
+---
 ```
 
-Without a hint, the snippet is inlined verbatim.
+The extension extracts this `transform:` block, sends the assembled page plus these
+hints to your service's endpoint, and uses the response. Governance happens once, at
+the page level — there are no per-include AI hints. Omit the `transform` config to
+disable it.
 
 ## Install
 
@@ -67,11 +78,9 @@ Configure via `remoteinclude.json` next to `docfx.json`:
   "allowMissing": false,
   "urlTemplate": "api/content/GetFile?path={source}",
   "auth": { "mode": "managedIdentity", "scope": "api://my-app-id/.default" },
-  "ai": {
-    "endpoint": "https://my-aoai.openai.azure.com/",
-    "deployment": "gpt-4o-mini",
-    "contextStrategy": "section",
-    "auth": { "mode": "default" }
+  "transform": {
+    "endpoint": "https://internal.example.com/transform",
+    "auth": { "mode": "managedIdentity", "scope": "api://my-app-id/.default" }
   }
 }
 ```
@@ -86,8 +95,8 @@ Both `auth` blocks accept `{ "mode": "none" | "default" | "managedIdentity" | "j
 `value` accepts `$VAR` / `${VAR}` to indirect through environment variables. `mode: "none"` sends
 no auth header (valid for the content service only). `scope` overrides the OAuth audience when using
 `default` or `managedIdentity` mode — useful when the API's audience differs from its hostname
-(e.g. `api://my-app-id/.default`). Omit the `ai` section entirely to disable
-rewriting. Legacy env vars `DOCFX_RI_BASE_URL` and `DOCFX_RI_TOKEN` (bearer JWT) still work when
+(e.g. `api://my-app-id/.default`). Omit the `transform` section entirely to disable
+page transformation. Legacy env vars `DOCFX_RI_BASE_URL` and `DOCFX_RI_TOKEN` (bearer JWT) still work when
 no `remoteinclude.json` is present.
 
 #### URL template
@@ -126,14 +135,15 @@ await Docset.Build("docs/docfx.json", new BuildOptions
 {
     ConfigureMarkdig = pipeline => pipeline.UseRemoteInclude(client, new RemoteIncludeOptions
     {
-        RewriteService = myRewriter, // optional IRewriteService
+        PageTransformService = myTransformService, // optional IPageTransformService
     }),
 });
 ```
 
 Provide your own `IRemoteContentClient` for non-HTTP sources, custom auth schemes
-(mTLS, signed URLs), or on-disk caching. Implement `IRewriteService` to plug in any
-LLM — the library itself has no Azure dependency.
+(mTLS, signed URLs), or on-disk caching. Implement `IPageTransformService` to plug in
+any page-level governance — tone, structure, or quality rules — backed by an LLM or
+deterministic rules. The library itself has no Azure dependency.
 
 ## Behavior
 

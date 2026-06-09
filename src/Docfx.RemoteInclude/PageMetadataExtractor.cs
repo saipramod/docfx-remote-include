@@ -21,7 +21,7 @@ namespace Docfx.RemoteInclude;
 /// </code>
 /// </para>
 /// </summary>
-internal static class PageMetadataExtractor
+public static class PageMetadataExtractor
 {
     public static PageTransformMetadata Extract(MarkdownDocument document)
     {
@@ -30,6 +30,46 @@ internal static class PageMetadataExtractor
 
         var yaml = yamlBlock.Lines.ToString();
         return ParseTransformBlock(yaml);
+    }
+
+    /// <summary>
+    /// Extracts <c>transform:</c> metadata from a raw markdown string's leading YAML
+    /// frontmatter block (delimited by <c>---</c> fences). Returns empty metadata when
+    /// no frontmatter is present.
+    /// </summary>
+    public static PageTransformMetadata Extract(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown)) return new PageTransformMetadata();
+
+        var yaml = ExtractFrontMatter(markdown);
+        return yaml is null ? new PageTransformMetadata() : ParseTransformBlock(yaml);
+    }
+
+    private static string? ExtractFrontMatter(string markdown)
+    {
+        var span = markdown.AsSpan().TrimStart('\uFEFF');
+        // Frontmatter must start at the very top of the file.
+        if (!span.StartsWith("---")) return null;
+
+        var lines = markdown.Replace("\r\n", "\n").Split('\n');
+        var start = -1;
+        for (var i = 0; i < lines.Length; i++)
+        {
+            if (string.IsNullOrWhiteSpace(lines[i])) continue;
+            if (lines[i].TrimEnd() == "---") { start = i; }
+            break;
+        }
+        if (start < 0) return null;
+
+        for (var i = start + 1; i < lines.Length; i++)
+        {
+            var t = lines[i].TrimEnd();
+            if (t == "---" || t == "...")
+            {
+                return string.Join('\n', lines[(start + 1)..i]);
+            }
+        }
+        return null;
     }
 
     private static PageTransformMetadata ParseTransformBlock(string yaml)

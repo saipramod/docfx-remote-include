@@ -23,7 +23,7 @@ public sealed class RemoteIncludeBracketBlockParser : BlockParser
         var line = processor.Line.ToString();
         var trimmed = line.TrimEnd();
 
-        if (!RemoteIncludeDirective.TryParseBracket(trimmed, 0, trimmed.Length - 1, out var consumed, out var source, out var title, out var hint))
+        if (!RemoteIncludeDirective.TryParseBracket(trimmed, 0, trimmed.Length - 1, out var consumed, out var source, out var title))
         {
             return BlockState.None;
         }
@@ -42,7 +42,6 @@ public sealed class RemoteIncludeBracketBlockParser : BlockParser
         var block = new RemoteIncludeBlock(this)
         {
             Source = source,
-            RewriteHint = hint,
             Attributes = attrs,
             Column = processor.Column,
             Span = { Start = processor.Start, End = processor.Line.End },

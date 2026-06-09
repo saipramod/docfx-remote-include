@@ -19,16 +19,18 @@ A reference implementation that serves as both the **content source** (for `[!re
 
 **Page transformation (`POST /transform`):**
 
-After all remote includes are resolved and the page is fully assembled:
+After all remote includes are resolved and the page is fully assembled, the service
+governs the page. Its behavior depends on whether you've defined guidance content:
 
-1. **Applies structure rules** (deterministic, rule-based):
-   - Removes sections marked with `overrides: { section: skip }` in frontmatter
-   - (Extensible — add your own rules)
-
-2. **Applies tone harmonization** (LLM-based, optional):
-   - Ensures consistent voice across the entire page
-   - Adapts for target audience and document intent
-   - Controlled centrally — individual doc authors pass hints, not prompts
+- **With central guidance** (markdown under `content/guidance/`): the service treats
+  that guidance as the source of truth, compares each assembled page against it, and
+  inserts `> [!NOTE] **Team Override**` callouts above content that deviates. It also
+  fixes heading hierarchy and harmonizes tone for the page's `audience`/`intent`.
+- **Without any guidance content**: the service is a **pure passthrough to the LLM** —
+  it just harmonizes tone and structure for the declared audience/intent. No comparison,
+  no override annotations.
+- **Without an `AiEndpoint` configured**: the page is returned unchanged (the service
+  is a no-op transform). The `/content` endpoint still works.
 
 ## Configuration
 
@@ -50,11 +52,67 @@ Settings in `appsettings.json`:
 | Setting | Required | Description |
 | --- | --- | --- |
 | `Content:RootPath` | No | Directory containing markdown files to serve. Default: `./content` |
-| `Transform:AiEndpoint` | No | Azure OpenAI endpoint. If empty, only rule-based transforms run. |
+| `Transform:AiEndpoint` | No | Azure OpenAI endpoint. If empty, `/transform` returns the page unchanged. |
 | `Transform:AiDeployment` | No | Model deployment name. Default: `gpt-4o-mini` |
 | `Transform:DefaultTone` | No | Default tone for all documents. Default: `professional technical documentation` |
 
 All settings can also be overridden via environment variables using the `__` separator (e.g. `Transform__AiEndpoint`).
+
+## Run as a sidecar
+
+The service is designed to run alongside your docs build as a sidecar. The container
+binds `0.0.0.0:8080` (set in the Dockerfile via `ASPNETCORE_URLS`), reads all config
+from environment variables, and has no required dependencies — if you provide no
+`content/guidance` and no `AiEndpoint`, it still serves `/content` and returns pages
+unchanged from `/transform`.
+
+**Docker Compose** — the docs build talks to the sidecar over the compose network:
+
+```yaml
+services:
+  knowledge-service:
+    build: ./samples/knowledge-service
+    environment:
+      - Transform__AiEndpoint=${AI_ENDPOINT:-}
+      - Transform__AiDeployment=gpt-4o-mini
+    ports:
+      - "8080:8080"
+
+  docs-build:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    depends_on: [knowledge-service]
+    working_dir: /docs
+    volumes:
+      - ./samples/basic:/docs
+    # remoteinclude.json baseUrl: http://knowledge-service:8080/content/
+    command: sh -c "dotnet tool install -g Documentation.DocfxRemoteInclude.Cli &&
+                    ~/.dotnet/tools/docfx-ri build docfx.json"
+```
+
+**Kubernetes** — run it as a sidecar container in the same Pod and probe `/health`:
+
+```yaml
+containers:
+  - name: docs-build
+    image: your-docs-builder:latest
+    # config points baseUrl/transform at http://localhost:8080
+  - name: knowledge-service
+    image: ghcr.io/saipramod/knowledge-service:latest
+    ports:
+      - containerPort: 8080
+    env:
+      - name: Transform__AiEndpoint
+        value: ""            # empty = passthrough/no-op transform
+    readinessProbe:
+      httpGet: { path: /health, port: 8080 }
+      initialDelaySeconds: 3
+    livenessProbe:
+      httpGet: { path: /health, port: 8080 }
+      initialDelaySeconds: 5
+```
+
+Because the sidecar shares `localhost` with the build container, point both
+`baseUrl` and `transform.endpoint` in `remoteinclude.json` at `http://localhost:8080`.
 
 ## Run locally
 

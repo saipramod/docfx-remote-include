@@ -5,15 +5,14 @@ internal static class RemoteIncludeDirective
     public const string BracketPrefix = "[!remoteinclude";
 
     /// <summary>
-    /// Parses <c>[!remoteinclude[title](source[ "rewrite hint"])]</c> starting at <paramref name="start"/>
+    /// Parses <c>[!remoteinclude[title](source)]</c> starting at <paramref name="start"/>
     /// in <paramref name="text"/>. Returns the exclusive end index on success.
     /// </summary>
-    public static bool TryParseBracket(string text, int start, int end, out int consumedEnd, out string source, out string title, out string hint)
+    public static bool TryParseBracket(string text, int start, int end, out int consumedEnd, out string source, out string title)
     {
         consumedEnd = start;
         source = string.Empty;
         title = string.Empty;
-        hint = string.Empty;
 
         var p = start;
         for (var i = 0; i < BracketPrefix.Length; i++)
@@ -40,19 +39,8 @@ internal static class RemoteIncludeDirective
         if (p > end) return false;
         var s = text.Substring(srcStart, p - srcStart);
 
-        // Optional whitespace then quoted hint.
-        var h = string.Empty;
+        // Tolerate optional trailing whitespace before the closing paren.
         while (p <= end && (text[p] == ' ' || text[p] == '\t')) p++;
-        if (p <= end && text[p] == '"')
-        {
-            p++;
-            var hintStart = p;
-            while (p <= end && text[p] != '"' && text[p] != '\n') p++;
-            if (p > end || text[p] != '"') return false;
-            h = text.Substring(hintStart, p - hintStart);
-            p++;
-            while (p <= end && (text[p] == ' ' || text[p] == '\t')) p++;
-        }
 
         if (p > end || text[p] != ')') return false;
         p++;
@@ -62,7 +50,6 @@ internal static class RemoteIncludeDirective
 
         source = s;
         title = t;
-        hint = h;
         consumedEnd = p + 1;
         return true;
     }

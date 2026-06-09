@@ -21,7 +21,7 @@ if (args.Length == 0 || args[0] is "-h" or "--help")
           4. Built-in defaults
 
         Directive syntax in markdown:
-          [!remoteinclude[title](source "hint")]
+          [!remoteinclude[title](source)]
         """);
     return args.Length == 0 ? 1 : 0;
 }
@@ -62,12 +62,6 @@ var authHandler = ContentAuthHandlerFactory.Build(baseUri, contentAuth);
 
 using var client = new HttpRemoteContentClient(baseUri, authHandler, urlTemplate: jsonConfig?.UrlTemplate);
 
-IRewriteService? rewriteService = null;
-if (jsonConfig?.Ai is { } aiSettings && !string.IsNullOrWhiteSpace(aiSettings.Endpoint))
-{
-    rewriteService = new AzureOpenAIRewriteService(aiSettings);
-}
-
 IPageTransformService? transformService = null;
 if (jsonConfig?.Transform is { } transformSettings && !string.IsNullOrWhiteSpace(transformSettings.Endpoint))
 {
@@ -78,9 +72,7 @@ var options = new RemoteIncludeOptions
 {
     AllowMissing = allowMissing,
     LogWarning = m => Console.Error.WriteLine(m),
-    RewriteService = rewriteService,
-    PageTransformService = null, // Transform is handled in pre-build step below
-    ContextStrategy = jsonConfig?.Ai?.ContextStrategy ?? ContextStrategy.Section,
+    PageTransformService = null, // Transform is handled in the pre-build step below
 };
 
 // Pre-build: resolve remote includes and apply page transform on a temp copy
@@ -111,7 +103,7 @@ if (transformService is not null)
             var request = new PageTransformRequest(
                 Content: resolved,
                 Source: Path.GetRelativePath(tempDir, mdFile),
-                Metadata: new PageTransformMetadata());
+                Metadata: PageMetadataExtractor.Extract(rawMarkdown));
             var result = transformService.TransformAsync(request).GetAwaiter().GetResult();
 
             if (result.Diagnostics is { Count: > 0 } diags)
@@ -175,7 +167,7 @@ static string ResolveIncludes(string markdown, IRemoteContentClient client, bool
     var pattern = @"\[!remoteinclude\[([^\]]*)\]\(([^)]+)\)\]";
     return System.Text.RegularExpressions.Regex.Replace(markdown, pattern, match =>
     {
-        var source = match.Groups[2].Value;
+        var source = match.Groups[2].Value.Trim();
         try
         {
             var content = client.GetMarkdownAsync(source).GetAwaiter().GetResult();

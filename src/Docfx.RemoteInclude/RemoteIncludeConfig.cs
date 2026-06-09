@@ -40,32 +40,6 @@ public sealed class AuthSettings
 }
 
 /// <summary>
-/// Strategy for what surrounding context is sent to the rewrite model.
-/// </summary>
-public enum ContextStrategy
-{
-    /// <summary>The nearest enclosing section (preceding heading down to next equal-or-higher heading).</summary>
-    Section,
-
-    /// <summary>The entire host markdown file.</summary>
-    Page,
-
-    /// <summary>No context — only the remote content and the rewrite hint are sent.</summary>
-    None,
-}
-
-/// <summary>
-/// Azure OpenAI configuration for the <c>rewrite="..."</c> directive attribute.
-/// </summary>
-public sealed class AiSettings
-{
-    public string? Endpoint { get; init; }
-    public string? Deployment { get; init; }
-    public ContextStrategy ContextStrategy { get; init; } = ContextStrategy.Section;
-    public AuthSettings? Auth { get; init; }
-}
-
-/// <summary>
 /// Configuration for the page transform service.
 /// </summary>
 public sealed class TransformSettings
@@ -86,7 +60,6 @@ public sealed class RemoteIncludeConfig
     public string? BaseUrl { get; init; }
     public bool? AllowMissing { get; init; }
     public AuthSettings? Auth { get; init; }
-    public AiSettings? Ai { get; init; }
     public TransformSettings? Transform { get; init; }
 
     /// <summary>

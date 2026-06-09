@@ -106,37 +106,59 @@ static async Task<string> ApplyLlmTransform(
 {
     var audience = metadata?.Audience ?? "engineers";
     var intent = metadata?.Intent ?? "reference";
+    var hasGuidance = !string.IsNullOrWhiteSpace(centralGuidance);
 
-    var systemPrompt = $"""
-        You are a documentation quality service. You receive a team's document and the central 
-        guidance (the source of truth for what this type of document should contain).
+    // With no user-defined guidance, the service is a pure tone/structure passthrough.
+    // With guidance, it additionally compares the page against the source of truth and
+    // annotates deviations.
+    var systemPrompt = hasGuidance
+        ? $"""
+            You are a documentation quality service. You receive a team's document and the central 
+            guidance (the source of truth for what this type of document should contain).
 
-        Your job:
-        1. COMPARE the team's document against central guidance. Identify where the team's 
-           content DEVIATES from what central guidance recommends (different values, missing 
-           sections, custom procedures that override the standard).
-        2. For each deviation, insert a DocFX note callout DIRECTLY ABOVE the deviating content:
-           > [!NOTE]
-           > **Team Override** — <brief explanation of how this deviates from central guidance>
-        3. Fix the heading hierarchy: exactly ONE H1 (the page title), everything else H2+.
-           Remove any duplicate/fragment title headings. Remove YAML frontmatter blocks.
-        4. Ensure consistent {defaultTone} tone for audience: {audience}, intent: {intent}.
-        5. Preserve ALL technical content, code blocks, tables, links exactly. Do not invent 
-           or remove information.
-        6. Return ONLY the final markdown. No commentary.
-        """;
+            Your job:
+            1. COMPARE the team's document against central guidance. Identify where the team's 
+               content DEVIATES from what central guidance recommends (different values, missing 
+               sections, custom procedures that override the standard).
+            2. For each deviation, insert a DocFX note callout DIRECTLY ABOVE the deviating content:
+               > [!NOTE]
+               > **Team Override** — <brief explanation of how this deviates from central guidance>
+            3. Fix the heading hierarchy: exactly ONE H1 (the page title), everything else H2+.
+               Remove any duplicate/fragment title headings. Remove YAML frontmatter blocks.
+            4. Ensure consistent {defaultTone} tone for audience: {audience}, intent: {intent}.
+            5. Preserve ALL technical content, code blocks, tables, links exactly. Do not invent 
+               or remove information.
+            6. Return ONLY the final markdown. No commentary.
+            """
+        : $"""
+            You are a documentation quality service. You receive an assembled document.
 
-    var userPrompt = $"""
-        ## Central Guidance (source of truth):
+            Your job:
+            1. Fix the heading hierarchy: exactly ONE H1 (the page title), everything else H2+.
+               Remove any duplicate/fragment title headings. Remove YAML frontmatter blocks.
+            2. Ensure consistent {defaultTone} tone for audience: {audience}, intent: {intent}.
+            3. Preserve ALL technical content, code blocks, tables, links exactly. Do not invent 
+               or remove information.
+            4. Return ONLY the final markdown. No commentary.
+            """;
 
-        {centralGuidance}
+    var userPrompt = hasGuidance
+        ? $"""
+            ## Central Guidance (source of truth):
 
-        ---
+            {centralGuidance}
 
-        ## Team Document (to transform):
+            ---
 
-        {content}
-        """;
+            ## Team Document (to transform):
+
+            {content}
+            """
+        : $"""
+            ## Document (to transform):
+
+            {content}
+            """;
 
     var options = new ChatCompletionOptions { Temperature = 0f };
     var completion = await chat.CompleteChatAsync(
@@ -149,7 +171,9 @@ static async Task<string> ApplyLlmTransform(
     var result = completion.Value.Content.Count > 0 ? completion.Value.Content[0].Text : null;
     if (!string.IsNullOrWhiteSpace(result))
     {
-        diagnostics.Add($"LLM transform applied: compared against central guidance, annotated overrides");
+        diagnostics.Add(hasGuidance
+            ? "LLM transform applied: compared against central guidance, annotated overrides"
+            : "LLM transform applied: tone and structure harmonization (no guidance configured)");
         return result.Trim();
     }
 

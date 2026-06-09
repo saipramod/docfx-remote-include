@@ -47,13 +47,6 @@ public static class RemoteIncludeConfigLoader
             AllowMissing = config.AllowMissing,
             UrlTemplate = config.UrlTemplate,
             Auth = ResolveAuth(config.Auth),
-            Ai = config.Ai is null ? null : new AiSettings
-            {
-                Endpoint = config.Ai.Endpoint,
-                Deployment = config.Ai.Deployment,
-                ContextStrategy = config.Ai.ContextStrategy,
-                Auth = ResolveAuth(config.Ai.Auth),
-            },
             Transform = config.Transform is null ? null : new TransformSettings
             {
                 Endpoint = config.Transform.Endpoint,

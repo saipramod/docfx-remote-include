@@ -55,22 +55,6 @@ public sealed class HtmlRemoteIncludeBlockRenderer : HtmlObjectRenderer<RemoteIn
             return;
         }
 
-        if (!string.IsNullOrWhiteSpace(block.RewriteHint) && _options.RewriteService is { } rewriter)
-        {
-            try
-            {
-                var context = SectionContext.Extract(block, _options.ContextStrategy);
-                content = rewriter.RewriteAsync(
-                    new RewriteRequest(content, block.RewriteHint, context, block.Source))
-                    .GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-                HandleError(renderer, block, $"Rewrite failed for '{block.Source}': {ex.Message}");
-                return;
-            }
-        }
-
         stack.Push(block.Source);
         try
         {
